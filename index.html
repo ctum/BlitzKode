@@ -315,6 +315,41 @@
     .dringlichkeits-element .zahl.gold { color: var(--gold); }
     .dringlichkeits-element .zahl.rot { color: var(--red); }
 
+    .countdown-bloecke {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .countdown-block {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      background: rgba(255,255,255,0.07);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 8px;
+      padding: 6px 10px;
+      min-width: 48px;
+    }
+    .countdown-block span {
+      font-size: 1.6rem;
+      font-weight: 900;
+      color: var(--white);
+      line-height: 1;
+    }
+    .countdown-block small {
+      font-size: 0.6rem;
+      color: var(--gray-dark);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-top: 3px;
+    }
+    .countdown-sep {
+      font-size: 1.4rem;
+      font-weight: 900;
+      color: var(--gray-400);
+      padding-bottom: 12px;
+    }
+
     .dringlichkeits-element .beschriftung {
       font-size: 0.82rem;
       color: var(--gray-dark);
@@ -1298,6 +1333,13 @@
       .schritte-raster { grid-template-columns: 1fr; }
       .vorlagen-raster { grid-template-columns: 1fr; }
       .leistungen-raster { grid-template-columns: 1fr; }
+      #top-bar { font-size: 0.78rem; padding: 8px 12px; gap: 8px; }
+      #top-bar a { display: none; }
+      .dringlichkeits-leiste { gap: 16px; padding: 20px 16px; }
+      .countdown-block { min-width: 40px; padding: 5px 7px; }
+      .countdown-block span { font-size: 1.3rem; }
+      .countdown-sep { font-size: 1.1rem; }
+      .dringlichkeits-element .zahl { font-size: 1.8rem; }
     }
 
     /* ── SECTION DIVIDERS ── */
@@ -1413,8 +1455,16 @@
     </div>
     <div class="trennlinie"></div>
     <div class="dringlichkeits-element">
-      <div class="zahl" id="countdown">23:47:12</div>
-      <div class="beschriftung">Angebot endet in</div>
+      <div class="beschriftung" style="margin-bottom:8px">Angebot endet in</div>
+      <div class="countdown-bloecke">
+        <div class="countdown-block"><span id="cd-tage">06</span><small>Tage</small></div>
+        <div class="countdown-sep">:</div>
+        <div class="countdown-block"><span id="cd-std">23</span><small>Std</small></div>
+        <div class="countdown-sep">:</div>
+        <div class="countdown-block"><span id="cd-min">47</span><small>Min</small></div>
+        <div class="countdown-sep">:</div>
+        <div class="countdown-block"><span id="cd-sek">12</span><small>Sek</small></div>
+      </div>
     </div>
   </div>
 
@@ -2499,11 +2549,10 @@
     const m = Math.floor((diff % 3600000) / 60000);
     const s = Math.floor((diff % 60000) / 1000);
 
-    document.getElementById('countdown').textContent =
-      (d > 0 ? d + 'd ' : '') +
-      String(h).padStart(2,'0') + ':' +
-      String(m).padStart(2,'0') + ':' +
-      String(s).padStart(2,'0');
+    document.getElementById('cd-tage').textContent = String(d).padStart(2,'0');
+    document.getElementById('cd-std').textContent  = String(h).padStart(2,'0');
+    document.getElementById('cd-min').textContent  = String(m).padStart(2,'0');
+    document.getElementById('cd-sek').textContent  = String(s).padStart(2,'0');
   }
 
   updateTimer();
@@ -2511,7 +2560,7 @@
 
   window.closeModal = function() {
     document.getElementById('erfolgsModal').classList.remove('show');
-    document.getElementById('formulario').scrollIntoView({ behavior: 'smooth' });
+    document.getElementById('formular').scrollIntoView({ behavior: 'smooth' });
   };
 
   window.toggleFaq = function(el) {
