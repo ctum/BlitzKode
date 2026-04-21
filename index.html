@@ -51,13 +51,20 @@
       position: fixed;
       top: 0; left: 0; right: 0;
       z-index: 1000;
-      background: rgba(10,10,10,0.96);
-      backdrop-filter: blur(12px);
+      background: transparent;
       padding: 16px 40px;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      border-bottom: 1px solid rgba(255,255,255,0.06);
+      border-bottom: 1px solid transparent;
+      transition: background 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+    }
+
+    nav.scrolled {
+      background: rgba(255,255,255,0.97);
+      backdrop-filter: blur(12px);
+      box-shadow: 0 2px 20px rgba(0,0,0,0.08);
+      border-bottom: 1px solid rgba(0,0,0,0.06);
     }
 
     .logo img {
@@ -65,6 +72,20 @@
       width: auto;
       display: block;
       filter: brightness(0) invert(1);
+      transition: filter 0.3s ease;
+    }
+
+    nav.scrolled .logo img {
+      filter: none;
+    }
+
+    nav a.cta-nav {
+      transition: background 0.2s, color 0.2s;
+    }
+
+    nav.scrolled a.cta-nav {
+      background: var(--gold);
+      color: var(--white);
     }
 
     footer .logo img {
@@ -467,51 +488,57 @@
     .nicht-enthalten strong { color: var(--white); }
 
     /* ── PRICING ── */
+
     #preise { background: var(--gray-50); }
 
     .preis-raster {
       display: flex;
-      gap: 16px;
-      margin-top: 60px;
-      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
       justify-content: center;
+      flex-wrap: nowrap;
+      margin-top: 48px;
     }
 
     .preis-karte {
       background: var(--white);
-      border: 1px solid var(--gray-200);
-      border-radius: 20px;
-      padding: 36px 28px;
-      text-align: center;
+      border: 1.5px solid var(--gray-200);
+      border-radius: 14px;
+      padding: 20px 16px;
       flex: 1;
-      min-width: 180px;
-      max-width: 220px;
+      min-width: 0;
       position: relative;
-      transition: transform 0.2s, box-shadow 0.2s;
+      display: flex;
+      flex-direction: column;
+      gap: 0;
     }
 
     .preis-karte.hervorgehoben {
-      background: var(--black);
-      border-color: var(--gold);
-      transform: scale(1.05);
-      box-shadow: 0 0 60px rgba(217,79,42,0.2);
+      border: 2.5px solid var(--gold);
+      box-shadow: 0 8px 32px rgba(217,79,42,0.15);
+      padding: 36px 20px 28px;
+      flex: 1.4;
     }
 
-    .preis-karte.hervorgehoben .preis-betrag { color: var(--gold); }
-    .preis-karte.hervorgehoben .preis-label { color: var(--gray-400); }
-    .preis-karte.hervorgehoben .preis-name { color: var(--white); }
-    .preis-karte.hervorgehoben .preis-beschreibung { color: var(--gray-400); }
+    .preis-karte.vergeben {
+      background: var(--gray-50);
+      border-color: var(--gray-200);
+      opacity: 0.6;
+    }
 
     .preis-abzeichen {
       position: absolute;
-      top: -12px;
+      top: -14px;
       left: 50%;
       transform: translateX(-50%);
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
       background: var(--gold);
-      color: var(--black);
-      padding: 4px 14px;
+      color: var(--white);
+      padding: 5px 14px;
       border-radius: 100px;
-      font-size: 0.7rem;
+      font-size: 0.65rem;
       font-weight: 800;
       text-transform: uppercase;
       letter-spacing: 0.5px;
@@ -519,63 +546,123 @@
     }
 
     .preis-name {
-      font-size: 0.85rem;
+      font-size: 0.68rem;
       font-weight: 700;
       text-transform: uppercase;
-      letter-spacing: 1px;
-      color: var(--gray-600);
-      margin-bottom: 16px;
+      letter-spacing: 0.5px;
+      color: var(--gray-400);
+      margin-bottom: 10px;
     }
 
     .preis-betrag {
-      font-size: 2.4rem;
+      font-size: 3.2rem;
       font-weight: 900;
       color: var(--black);
       line-height: 1;
       margin-bottom: 4px;
     }
 
-    .preis-label {
-      font-size: 0.8rem;
+    .preis-betrag-suffix {
+      font-size: 0.78rem;
       color: var(--gray-400);
       margin-bottom: 16px;
     }
 
-    .preis-plaetze {
-      font-size: 0.78rem;
-      padding: 6px 12px;
-      border-radius: 100px;
-      font-weight: 700;
+    .preis-checks {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-top: 4px;
+      text-align: left;
     }
 
-    .vergeben-plaetze {
-      background: rgba(230,57,70,0.1);
-      color: var(--red);
-    }
-
-    .verfuegbar-plaetze {
-      background: rgba(42,157,143,0.1);
-      color: var(--green);
-    }
-
-    .zukunft-plaetze {
-      background: var(--gray-100);
-      color: var(--gray-400);
-    }
-
-    .preis-beschreibung {
+    .preis-checks span {
       font-size: 0.8rem;
       color: var(--gray-600);
-      margin-top: 12px;
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      line-height: 1.4;
+    }
+
+    .preis-checks span i { color: var(--green); margin-top: 2px; flex-shrink: 0; }
+
+    .preis-naechste {
+      margin-top: 16px;
+    }
+
+    .preis-naechste strong {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 0.7rem;
+      font-weight: 700;
+      color: var(--gray-600);
+      background: var(--gray-100);
+      padding: 4px 10px;
+      border-radius: 100px;
+      margin-bottom: 8px;
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+    }
+
+    .preis-naechste p {
+      font-size: 0.78rem;
+      color: var(--gray-400);
       line-height: 1.5;
     }
 
-    .preis-pfeil {
+    .preis-betrag-aktiv {
+      color: var(--gold);
+      font-size: 3.8rem;
+    }
+
+    .preis-trennlinie {
+      border: none;
+      border-top: 1px solid var(--gray-200);
+      margin: 12px 0;
+      width: 100%;
+    }
+
+    .preis-plaetze-badge {
       display: flex;
       align-items: center;
+      justify-content: center;
+      gap: 6px;
+      background: rgba(42,157,143,0.12);
+      color: #1e8a7e;
+      font-size: 0.8rem;
+      font-weight: 700;
+      padding: 6px 12px;
+      border-radius: 100px;
+      margin-bottom: 8px;
+      text-align: center;
+    }
+
+    .preis-vergeben-label {
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--red);
+      margin-top: 8px;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .preis-cta-wrap {
+      text-align: center;
+      margin-top: 36px;
+    }
+
+    .preis-hinweis {
+      text-align: center;
+      margin-top: 16px;
+      font-size: 0.78rem;
       color: var(--gray-400);
-      font-size: 1.2rem;
-      padding-top: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
     }
 
     /* ── TEMPLATES PREVIEW ── */
@@ -1088,9 +1175,8 @@
       .dringlichkeits-leiste { gap: 24px; padding: 24px; }
       .trennlinie { display: none; }
       .formular-container { padding: 32px 24px; }
-      .preis-raster { gap: 12px; }
-      .preis-karte.hervorgehoben { transform: scale(1); }
-      .preis-pfeil { display: none; }
+      .preis-raster { flex-wrap: wrap; gap: 10px; }
+      .preis-karte { min-width: 140px; }
       footer { padding: 40px 20px 32px; }
       .team-raster { grid-template-columns: 1fr !important; gap: 40px !important; }
       .team-bild-wrapper { max-height: 280px; }
@@ -1171,13 +1257,8 @@
 
   <div class="dringlichkeits-leiste">
     <div class="dringlichkeits-element">
-      <div class="zahl rot" id="zaehler-vergeben">3</div>
-      <div class="beschriftung">Plätze vergeben</div>
-    </div>
-    <div class="trennlinie"></div>
-    <div class="dringlichkeits-element">
-      <div class="zahl gruen" id="zaehler-frei">2</div>
-      <div class="beschriftung" id="beschriftung-frei">Kostenlos verfügbar</div>
+      <div class="zahl gruen" id="zaehler-frei">2 von 10</div>
+      <div class="beschriftung" id="beschriftung-frei">Plätzen frei</div>
     </div>
     <div class="trennlinie"></div>
     <div class="dringlichkeits-element">
@@ -1260,75 +1341,75 @@
   <div class="inhalt">
     <div class="abschnitt-label" style="color:var(--gold)">Leistungsumfang</div>
     <h2 class="abschnitt-titel">Was Sie bekommen</h2>
-    <p class="abschnitt-untertitel" style="color:var(--gray-400)">Eine vollständige One-Page-Website mit bis zu 5 Sektionen — professionell, modern und mobiloptimiert.</p>
+    <p class="abschnitt-untertitel" style="color:var(--gray-400)">Eine vollständige One-Page-Website mit bis zu fünf Sektionen, professionell gestaltet, modern und mit optimierter Darstellung auf Smartphone, Tablet und Desktop.</p>
 
     <div class="leistungen-raster">
       <div class="leistung-element">
         <div class="leistung-symbol"><i class="fa-solid fa-mobile-screen"></i></div>
         <div class="leistung-text">
           <h4>Responsive Design</h4>
-          <p>Perfekt auf Smartphone, Tablet und Desktop. Kein Nutzer geht verloren.</p>
+          <p>Optimale Darstellung auf Smartphone, Tablet und Desktop. So erreichen Sie Nutzer auf jedem Gerät.</p>
         </div>
       </div>
       <div class="leistung-element">
         <div class="leistung-symbol"><i class="fa-solid fa-palette"></i></div>
         <div class="leistung-text">
           <h4>Professionelles Design</h4>
-          <p>Aus über 80 Vorlagen wählen Sie Ihren Stil. Farben & Fonts individuell angepasst.</p>
+          <p>Sie wählen aus über 80 Vorlagen Ihren Stil. Farben und Schriftarten passen wir individuell an.</p>
         </div>
       </div>
       <div class="leistung-element">
         <div class="leistung-symbol"><i class="fa-solid fa-magnifying-glass"></i></div>
         <div class="leistung-text">
           <h4>SEO-Grundoptimierung</h4>
-          <p>Meta-Tags, schnelle Ladezeiten und sauberer Code — für bessere Google-Sichtbarkeit.</p>
+          <p>Meta-Tags, schnelle Ladezeiten und sauberer Code sorgen für eine bessere Sichtbarkeit bei Google.</p>
         </div>
       </div>
       <div class="leistung-element">
         <div class="leistung-symbol"><i class="fa-solid fa-envelope"></i></div>
         <div class="leistung-text">
           <h4>Kontaktformular</h4>
-          <p>Damit Ihre Kunden Sie direkt erreichen können — ohne Umwege.</p>
+          <p>Ihre Kunden erreichen Sie direkt und ohne Umwege.</p>
         </div>
       </div>
       <div class="leistung-element">
         <div class="leistung-symbol"><i class="fa-solid fa-shield-halved"></i></div>
         <div class="leistung-text">
           <h4>DSGVO-konform</h4>
-          <p>Impressum-Grundstruktur, Cookie-Hinweis und Datenschutz-Basis — rechtssicher von Anfang an.</p>
+          <p>Impressum-Grundstruktur, Cookie-Hinweis und Datenschutz-Basis für einen rechtssicheren Start.</p>
         </div>
       </div>
       <div class="leistung-element">
         <div class="leistung-symbol"><i class="fa-solid fa-code"></i></div>
         <div class="leistung-text">
           <h4>Sauberer Code</h4>
-          <p>Sie erhalten alle Dateien und Zugänge. Kein Lock-in, keine versteckten Kosten.</p>
+          <p>Sie erhalten alle Dateien und Zugänge. Keine Abhängigkeit, keine versteckten Kosten.</p>
         </div>
       </div>
     </div>
 
     <div class="nicht-enthalten">
       <i class="fa-solid fa-circle-info"></i>
-      <p><strong>Was Sie selbst kaufen müssen:</strong> Hosting (~3–8 €/Monat, z. B. Hetzner oder Ionos) und Domain (~1–2 €/Monat, z. B. yourname.de). Wir helfen Ihnen dabei, die richtige Wahl zu treffen und die Einrichtung zu erklären.</p>
+      <p><strong>Was Sie selbst benötigen:</strong> Hosting und Domain. Die monatlichen Kosten liegen je nach Anbieter bei etwa 3 bis 8 € für das Hosting und 1 bis 2 € für die Domain. Wir unterstützen Sie bei der Auswahl und zeigen Ihnen, wie die Einrichtung funktioniert.</p>
     </div>
   </div>
 </section>
 
 <section id="preise">
-  <div class="inhalt">
-    <div class="abschnitt-label">Preisstruktur</div>
-    <h2 class="abschnitt-titel">Je früher, desto günstiger</h2>
-    <p class="abschnitt-untertitel">Der Preis steigt mit jedem vergebenen Platz. Sichern Sie sich jetzt den besten Deal.</p>
+  <div class="inhalt" style="text-align:center">
+    <h2 class="abschnitt-titel" style="text-align:center">Preisstruktur</h2>
+    <p style="text-align:center;font-size:1.05rem;font-weight:500;color:var(--gray-600);margin-bottom:8px">Je früher Sie buchen, <span style="color:var(--gold);font-weight:700">desto günstiger.</span></p>
+    <p class="abschnitt-untertitel" style="text-align:center;font-weight:700;color:var(--black);background:#fff;padding:10px 20px;border-radius:10px;display:inline-block;margin:20px auto 0;box-shadow:0 2px 12px rgba(0,0,0,0.08)"><i class="fa-solid fa-arrow-trend-up" style="color:var(--gold);margin-right:6px"></i>Der Preis steigt mit jedem vergebenen Platz.</p>
 
-    <div class="preis-raster" id="preis-raster">
-    </div>
+    <div class="preis-raster" id="preis-raster"></div>
 
-    <div style="text-align:center;margin-top:48px">
-      <a href="#formular" class="btn-haupt" id="btn-preis-cta">
+    <div class="preis-cta-wrap">
+      <a href="#formular" class="btn-haupt" id="btn-preis-cta" style="padding:18px 48px;border-radius:12px;font-size:1rem">
         <i class="fa-solid fa-bolt"></i>
-        Kostenlosen Platz jetzt sichern
+        Jetzt Gratis-Platz sichern
       </a>
     </div>
+    <p class="preis-hinweis"><i class="fa-solid fa-shield-halved"></i> Designkosten einmalig. Hosting und Domain buchen Sie selbst.</p>
   </div>
 </section>
 
@@ -1368,7 +1449,7 @@
   <div class="inhalt">
     <div class="abschnitt-label">Vorlagen</div>
     <h2 class="abschnitt-titel">Wie Ihre Website aussehen könnte</h2>
-    <p class="abschnitt-untertitel">Über 65 professionelle Designs — alle individuell anpassbar auf Ihre Branche und Marke.</p>
+    <p class="abschnitt-untertitel">Wählen Sie aus über 65 professionellen Designs. Wir passen jedes Design individuell an Ihre Branche und Ihre Marke an.</p>
 
     <div class="vorlagen-raster">
 
@@ -1512,9 +1593,9 @@
       </div>
       <div class="team-text">
         <div class="abschnitt-label" style="color:var(--gold)">Das Team</div>
-        <h2 class="abschnitt-titel" style="color:var(--white)">Menschen hinter dem Code.</h2>
-        <p style="color:var(--gray-400);font-size:1rem;line-height:1.8;margin-bottom:24px">Wir sind kein anonymes Unternehmen. Blitzkode besteht aus zwei Spezialisten aus Mainz — einem Webdesigner und einem Entwickler — die jedem Projekt persönliche Aufmerksamkeit widmen.</p>
-        <p style="color:var(--gray-400);font-size:1rem;line-height:1.8;margin-bottom:32px">Wenn Sie uns schreiben, antworten wir. Kein Callcenter, kein Junior-Team. Wir selbst.</p>
+        <h2 class="abschnitt-titel" style="color:var(--white)">Die Menschen hinter dem Code.</h2>
+        <p style="color:var(--gray-400);font-size:1rem;line-height:1.8;margin-bottom:24px">Hinter Blitzkode stehen zwei Spezialisten aus Mainz, ein Webdesigner und ein Entwickler. Wir begleiten jedes Projekt persönlich, mit klarem Blick für Design, Technik und Ihre Ziele.</p>
+        <p style="color:var(--gray-400);font-size:1rem;line-height:1.8;margin-bottom:32px">Wenn Sie uns schreiben, sprechen Sie direkt mit uns. Ohne Umwege, ohne Callcenter, ohne wechselnde Ansprechpartner.</p>
         <div style="display:flex;flex-direction:column;gap:16px">
           <div style="display:flex;align-items:center;gap:14px">
             <div style="width:44px;height:44px;border-radius:50%;background:rgba(217,79,42,0.15);border:1px solid rgba(217,79,42,0.3);display:flex;align-items:center;justify-content:center;color:var(--gold);font-size:1rem;flex-shrink:0">
@@ -1544,7 +1625,7 @@
   <div class="inhalt">
     <div class="abschnitt-label">Stimmen</div>
     <h2 class="abschnitt-titel">Was unsere Kunden sagen</h2>
-    <p class="abschnitt-untertitel">Echte Erfahrungen von Unternehmern aus der Region.</p>
+    <p class="abschnitt-untertitel">Unternehmer aus der Region berichten von ihren Erfahrungen mit Blitzkode.</p>
 
     <div class="bewertungen-raster">
 
@@ -1598,7 +1679,7 @@
   <div class="inhalt">
     <div class="abschnitt-label" style="color:var(--gold)" id="formular-label">Jetzt bewerben</div>
     <h2 class="abschnitt-titel" style="color:var(--white)" id="formular-titel">Sichern Sie sich Ihren kostenlosen Platz</h2>
-    <p class="abschnitt-untertitel" style="color:var(--gray-400)">Füllen Sie das Formular aus — wir melden uns innerhalb von 24 Stunden für einen persönlichen Termin.</p>
+    <p class="abschnitt-untertitel" style="color:var(--gray-400)">Füllen Sie das Formular aus. Innerhalb von 24 Stunden melden wir uns bei Ihnen, um einen persönlichen Termin zu vereinbaren.</p>
 
     <div class="formular-container">
       <div class="formular-hinweis">
@@ -1896,18 +1977,25 @@
     const { current_price, current_tier, slots_remaining, total_leads } = data;
     const isFree = current_price === 0;
 
-    const soldEl = document.getElementById('zaehler-vergeben');
+    const currentTierData = TIERS.find(t => t.tier === current_tier);
     const freeEl = document.getElementById('zaehler-frei');
-    if (soldEl) soldEl.textContent = total_leads;
+    const beschriftungFreeEl = document.getElementById('beschriftung-frei');
     if (freeEl) {
-      freeEl.textContent = slots_remaining;
+      freeEl.textContent = `${slots_remaining} von ${currentTierData ? currentTierData.slots : 10}`;
       freeEl.className = 'zahl ' + (slots_remaining > 0 ? 'gruen' : 'rot');
+    }
+    if (beschriftungFreeEl) {
+      beschriftungFreeEl.textContent = 'Plätzen frei';
     }
 
     const nextTierData = TIERS.find(t => t.tier === current_tier + 1);
     const priceEl = document.querySelector('.dringlichkeits-element .zahl.gold');
+    const preisLabel = document.querySelector('.dringlichkeits-element .zahl.gold + .beschriftung');
     if (priceEl) {
-      priceEl.textContent = nextTierData ? nextTierData.price + ' €' : '1.200 €';
+      priceEl.textContent = nextTierData ? nextTierData.price + ' €' : '—';
+    }
+    if (preisLabel) {
+      preisLabel.textContent = nextTierData ? 'Nächster Preis' : 'Letzter Preis';
     }
 
     const formNote = document.querySelector('.formular-hinweis span');
@@ -1999,52 +2087,56 @@
     if (!grid) return;
 
     let slotStart = 1;
-    const cards = TIERS.map((t, i) => {
-      const slotEnd = slotStart + t.slots - 1;
-      const rangeLabel = `Platz ${slotStart}–${slotEnd}`;
-      slotStart = slotEnd + 1;
+    const ranges = TIERS.map(t => {
+      const start = slotStart;
+      const end = slotStart + t.slots - 1;
+      slotStart = end + 1;
+      return { start, end };
+    });
 
+    const cards = TIERS.map((t, i) => {
+      const { start, end } = ranges[i];
+      const rangeLabel = `Platz ${start}–${end}`;
       const isPast    = t.tier < current_tier;
       const isCurrent = t.tier === current_tier;
-      const isFuture  = t.tier > current_tier;
-
-      let cardHtml = '';
 
       if (isPast) {
-        cardHtml = `
-          <div class="preis-karte" style="opacity:0.45">
+        return `
+          <div class="preis-karte vergeben">
             <div class="preis-name">${rangeLabel}</div>
-            <div class="preis-betrag">${t.price === 0 ? 'Gratis' : t.price + ' €'}</div>
-            <div class="preis-label">Einmalig</div>
-            <div class="preis-plaetze vergeben-plaetze"><i class="fa-solid fa-lock"></i> Vergeben</div>
-            <div class="preis-beschreibung">Alle Plätze belegt</div>
+            <div class="preis-betrag" style="font-size:2rem;color:var(--gray-400)">${t.price === 0 ? '0 €' : t.price + ' €'}</div>
+            <div class="preis-betrag-suffix">${t.price === 0 ? 'Designkosten' : 'einmalig'}</div>
+            <hr class="preis-trennlinie" />
+            <div class="preis-vergeben-label"><i class="fa-solid fa-lock"></i> Alle Plätze vergeben</div>
           </div>`;
       } else if (isCurrent) {
-        cardHtml = `
+        return `
           <div class="preis-karte hervorgehoben">
-            <div class="preis-abzeichen"><i class="fa-solid fa-fire"></i> Sie sind hier!</div>
+            <div class="preis-abzeichen"><i class="fa-solid fa-fire"></i> SIE SIND HIER</div>
             <div class="preis-name">${rangeLabel}</div>
-            <div class="preis-betrag">${t.price === 0 ? 'Gratis' : t.price + ' €'}</div>
-            <div class="preis-label">${t.price === 0 ? 'Designkosten' : 'Einmalig'}</div>
-            <div class="preis-plaetze verfuegbar-plaetze"><i class="fa-solid fa-bolt"></i> ${slots_remaining} verfügbar</div>
-            <div class="preis-beschreibung">${t.price === 0 ? 'Jetzt kostenlos bewerben' : 'Jetzt buchen'}</div>
+            <div class="preis-betrag preis-betrag-aktiv">${t.price === 0 ? '0' : t.price} <span style="font-size:2rem">€</span></div>
+            <div class="preis-betrag-suffix">${t.price === 0 ? 'Designkosten' : 'einmalig'}</div>
+            <hr class="preis-trennlinie" />
+            <div class="preis-plaetze-badge"><i class="fa-solid fa-users"></i> Nur noch ${slots_remaining} Plätze frei</div>
+            <div class="preis-checks">
+              <span><i class="fa-solid fa-check"></i> Fertig in 3–7 Werktagen</span>
+              <span><i class="fa-solid fa-check"></i> Sie zahlen nur Hosting und Domain</span>
+            </div>
           </div>`;
       } else {
-        cardHtml = `
+        const prevRange = ranges[i - 1];
+        return `
           <div class="preis-karte">
             <div class="preis-name">${rangeLabel}</div>
-            <div class="preis-betrag">${t.price === 0 ? 'Gratis' : t.price + ' €'}</div>
-            <div class="preis-label">Einmalig</div>
-            <div class="preis-plaetze zukunft-plaetze"><i class="fa-solid fa-clock"></i> Demnächst</div>
-            <div class="preis-beschreibung">Folgestufe</div>
+            <div class="preis-betrag">${t.price} <span style="font-size:1.2rem">€</span></div>
+            <div class="preis-betrag-suffix">einmalig</div>
+            <hr class="preis-trennlinie" />
+            <div class="preis-naechste">
+              <strong><i class="fa-solid fa-clock"></i> Nächste Preisstufe</strong>
+              <p>Wird aktiv, sobald Platz ${prevRange.start}–${prevRange.end} vergeben ist.</p>
+            </div>
           </div>`;
       }
-
-      const arrow = i < TIERS.length - 1
-        ? '<div class="preis-pfeil"><i class="fa-solid fa-chevron-right"></i></div>'
-        : '';
-
-      return cardHtml + arrow;
     });
 
     grid.innerHTML = cards.join('');
@@ -2223,13 +2315,51 @@
     document.querySelectorAll('.faq-element').forEach(i => i.classList.remove('open'));
     if (!isOpen) item.classList.add('open');
   };
+
+  let _previewTier = 1;
+  let _previewSlots = 10;
+
+  window.previewTier = function(tier) {
+    _previewTier = parseInt(tier);
+    const t = TIERS.find(t => t.tier === _previewTier);
+    if (!t) return;
+    _previewSlots = t.slots;
+    const slotInput = document.getElementById('preview-slots');
+    if (slotInput) { slotInput.max = t.slots; slotInput.value = t.slots; }
+    const slotLabel = document.getElementById('preview-slots-label');
+    if (slotLabel) slotLabel.textContent = t.slots;
+    updateUI({ current_tier: t.tier, current_price: t.price, slots_remaining: _previewSlots, total_leads: (_previewTier - 1) * 10 });
+  };
+
+  window.previewSlots = function(val) {
+    _previewSlots = parseInt(val);
+    const slotLabel = document.getElementById('preview-slots-label');
+    if (slotLabel) slotLabel.textContent = _previewSlots;
+    const t = TIERS.find(t => t.tier === _previewTier);
+    if (!t) return;
+    updateUI({ current_tier: t.tier, current_price: t.price, slots_remaining: _previewSlots, total_leads: (_previewTier - 1) * 10 });
+  };
 </script>
+
+<div id="preview-panel" style="position:fixed;bottom:20px;left:20px;z-index:9999;background:#1a1a1a;border:1px solid #333;border-radius:12px;padding:12px 16px;display:flex;align-items:center;gap:12px;font-family:Inter,sans-serif;font-size:0.8rem;color:#999">
+  <span style="color:#555;font-size:0.7rem;text-transform:uppercase;letter-spacing:1px">Preview</span>
+  <select onchange="previewTier(this.value)" style="background:#2a2a2a;border:1px solid #444;color:#fff;padding:4px 8px;border-radius:6px;font-size:0.8rem;cursor:pointer">
+    <option value="1">Tier 1 — Kostenlos</option>
+    <option value="2">Tier 2 — 200 €</option>
+    <option value="3">Tier 3 — 500 €</option>
+    <option value="4">Tier 4 — 999 €</option>
+    <option value="5">Tier 5 — 1.200 €</option>
+  </select>
+  <span style="color:#444">|</span>
+  <span style="color:#666;font-size:0.7rem">Plätze:</span>
+  <input id="preview-slots" type="range" min="0" max="10" value="10" oninput="previewSlots(this.value)" style="width:80px;accent-color:#D94F2A;cursor:pointer" />
+  <span id="preview-slots-label" style="color:#fff;min-width:16px;text-align:center">10</span>
+  <span style="color:#444;font-size:0.7rem">· solo local</span>
+</div>
 
 <script>
   emailjs.init('NtqghfvpSrbV0sUg8');
   gsap.registerPlugin(ScrollTrigger);
-
-  // ── HERO: entrada escalonada después del preloader ──
   const heroTl = gsap.timeline({ delay: 0.6 });
   heroTl
     .from('.abzeichen', { y: -20, opacity: 0, duration: 0.5, ease: 'power2.out' })
@@ -2239,8 +2369,6 @@
     .from('.preis-stufen', { y: 20, opacity: 0, duration: 0.5, ease: 'power2.out' }, '-=0.3')
     .from('.held-aktionen', { y: 20, opacity: 0, duration: 0.5, ease: 'power2.out' }, '-=0.2')
     .from('.vertrauen-zeile', { y: 15, opacity: 0, duration: 0.4, ease: 'power2.out' }, '-=0.2');
-
-  // ── HERO: glow pulsante en el fondo ──
   gsap.to('.held::before', {
     scale: 1.15,
     duration: 3,
@@ -2248,8 +2376,6 @@
     yoyo: true,
     ease: 'sine.inOut'
   });
-
-  // ── NÚMEROS del counter: count-up visual ──
   ScrollTrigger.create({
     trigger: '.dringlichkeits-leiste',
     start: 'top 80%',
@@ -2260,8 +2386,6 @@
       });
     }
   });
-
-  // ── PASOS: entrada en cascada ──
   gsap.from('.schritt-karte', {
     scrollTrigger: { trigger: '.schritte-raster', start: 'top 85%' },
     y: 50, opacity: 0, duration: 0.6, stagger: 0.15, ease: 'power2.out', clearProps: 'all'
@@ -2285,26 +2409,18 @@
       });
     }
   });
-
-  // ── TABLA DE LEADS: fade in ──
   gsap.from('#wer-ist-dabei table', {
     scrollTrigger: { trigger: '#wer-ist-dabei', start: 'top 80%' },
     y: 30, opacity: 0, duration: 0.7, ease: 'power2.out'
   });
-
-  // ── VORLAGEN CARDS ──
   gsap.from('.vorlage-karte', {
     scrollTrigger: { trigger: '.vorlagen-raster', start: 'top 80%' },
     y: 40, opacity: 0, duration: 0.5, stagger: 0.08, ease: 'power2.out'
   });
-
-  // ── TESTIMONIOS ──
   gsap.from('.bewertung-karte', {
     scrollTrigger: { trigger: '.bewertungen-raster', start: 'top 80%' },
     y: 30, opacity: 0, duration: 0.6, stagger: 0.15, ease: 'power2.out'
   });
-
-  // ── FORMULARIO: slide up ──
   gsap.from('.formular-container', {
     scrollTrigger: { trigger: '#formular', start: 'top 75%' },
     y: 50, opacity: 0, duration: 0.8, ease: 'power3.out'
@@ -2319,14 +2435,10 @@
     scrollTrigger: { trigger: '#team', start: 'top 75%' },
     x: 60, opacity: 0, duration: 0.9, ease: 'power3.out', delay: 0.15
   });
-
-  // ── FAQ: items en cascada ──
   gsap.from('.faq-element', {
     scrollTrigger: { trigger: '.faq-liste', start: 'top 80%' },
     y: 20, opacity: 0, duration: 0.4, stagger: 0.08, ease: 'power2.out'
   });
-
-  // ── SECTION LABELS: slide desde abajo ──
   gsap.utils.toArray('.abschnitt-label').forEach(el => {
     gsap.from(el, {
       scrollTrigger: { trigger: el, start: 'top 90%' },
@@ -2340,14 +2452,10 @@
       y: 25, opacity: 0, duration: 0.6, ease: 'power2.out', delay: 0.1
     });
   });
-
-  // ── HOVER en price cards: lift suave ──
   document.querySelectorAll('.preis-karte:not(.hervorgehoben)').forEach(card => {
     card.addEventListener('mouseenter', () => gsap.to(card, { y: -6, duration: 0.25, ease: 'power2.out' }));
     card.addEventListener('mouseleave', () => gsap.to(card, { y: 0, duration: 0.25, ease: 'power2.out' }));
   });
-
-  // ── FLOATING CTA: aparece al hacer scroll ──
   const floatingBtn = document.querySelector('.schwebendes-cta');
   gsap.set(floatingBtn, { opacity: 0, y: 20 });
   ScrollTrigger.create({
@@ -2356,6 +2464,14 @@
     onEnter: () => gsap.to(floatingBtn, { opacity: 1, y: 0, duration: 0.4, ease: 'power2.out' }),
     onLeaveBack: () => gsap.to(floatingBtn, { opacity: 0, y: 20, duration: 0.3 })
   });
+  const navEl = document.querySelector('nav');
+  window.addEventListener('scroll', () => {
+    if (window.scrollY > 60) {
+      navEl.classList.add('scrolled');
+    } else {
+      navEl.classList.remove('scrolled');
+    }
+  }, { passive: true });
 </script>
 
 </body>
