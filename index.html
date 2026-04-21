@@ -127,7 +127,7 @@
       position: absolute;
       top: -200px; left: 50%;
       transform: translateX(-50%);
-      width: 700px; height: 700px;
+      width: min(700px, 100vw); height: min(700px, 100vw);
       background: radial-gradient(circle, rgba(217,79,42,0.12) 0%, transparent 70%);
       pointer-events: none;
     }
@@ -310,8 +310,8 @@
       display: flex;
       align-items: center;
       gap: 24px;
-      color: var(--gray-600);
-      font-size: 0.82rem;
+      color: var(--gray-dark);
+      font-size: 0.95rem;
       flex-wrap: wrap;
       justify-content: center;
     }
@@ -1296,7 +1296,7 @@
   </div>
 
   <div class="vertrauen-zeile">
-    <span><i class="fa-solid fa-circle-check"></i> Kein Designkosten</span>
+    <span><i class="fa-solid fa-circle-check"></i> <span id="badge-designkosten">Kein Designkosten</span></span>
     <span><i class="fa-solid fa-circle-check"></i> Made in Mainz</span>
     <span><i class="fa-solid fa-circle-check"></i> DSGVO-konform</span>
     <span><i class="fa-solid fa-circle-check"></i> Sie behalten alle Rechte</span>
@@ -2043,6 +2043,11 @@
       }
     }
 
+    const designkostenBadge = document.getElementById('badge-designkosten');
+    if (designkostenBadge) {
+      designkostenBadge.textContent = isFree ? 'Kein Designkosten' : 'Einmalige Designkosten';
+    }
+
     const btnPricingCta = document.getElementById('btn-preis-cta');
     if (btnPricingCta) {
       if (isFree && slots_remaining > 0) {
@@ -2317,6 +2322,7 @@
     if (!isOpen) item.classList.add('open');
   };
 
+  /* PREVIEW PANEL — disabled in production, re-enable locally to test tier/slot states
   let _previewTier = 1;
   let _previewSlots = 10;
 
@@ -2340,8 +2346,10 @@
     if (!t) return;
     updateUI({ current_tier: t.tier, current_price: t.price, slots_remaining: _previewSlots, total_leads: (_previewTier - 1) * 10 });
   };
+  END PREVIEW PANEL */
 </script>
 
+<!-- PREVIEW PANEL — disabled in production, uncomment locally to test tier/slot states
 <div id="preview-panel" style="position:fixed;bottom:20px;left:20px;z-index:9999;background:#1a1a1a;border:1px solid #333;border-radius:12px;padding:12px 16px;display:flex;align-items:center;gap:12px;font-family:Inter,sans-serif;font-size:0.8rem;color:#999">
   <span style="color:#555;font-size:0.7rem;text-transform:uppercase;letter-spacing:1px">Preview</span>
   <select onchange="previewTier(this.value)" style="background:#2a2a2a;border:1px solid #444;color:#fff;padding:4px 8px;border-radius:6px;font-size:0.8rem;cursor:pointer">
@@ -2357,6 +2365,7 @@
   <span id="preview-slots-label" style="color:#fff;min-width:16px;text-align:center">10</span>
   <span style="color:#444;font-size:0.7rem">· solo local</span>
 </div>
+END PREVIEW PANEL -->
 
 <script>
   emailjs.init('NtqghfvpSrbV0sUg8');
