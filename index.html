@@ -75,7 +75,18 @@
       font-weight: 800;
       white-space: nowrap;
     }
-    #top-bar.visible ~ nav { top: 40px; }
+    #top-bar-close {
+      background: none;
+      border: none;
+      color: rgba(255,255,255,0.7);
+      font-size: 1.3rem;
+      line-height: 1;
+      cursor: pointer;
+      padding: 0 0 0 8px;
+      flex-shrink: 0;
+    }
+    #top-bar-close:hover { color: #fff; }
+    #top-bar.visible ~ nav { top: var(--bar-h, 40px); }
 
     #exit-popup-overlay {
       position: fixed;
@@ -1278,8 +1289,9 @@
       .dringlichkeits-leiste { gap: 24px; padding: 24px; }
       .trennlinie { display: none; }
       .formular-container { padding: 32px 24px; }
-      .preis-raster { flex-wrap: wrap; gap: 10px; }
-      .preis-karte { min-width: 140px; }
+      .preis-raster { flex-direction: column; align-items: stretch; }
+      .preis-karte { flex: none !important; width: 100%; }
+      .preis-karte.hervorgehoben { flex: none !important; }
       footer { padding: 40px 20px 32px; }
       .team-raster { grid-template-columns: 1fr !important; gap: 40px !important; }
       .team-bild-wrapper { max-height: 280px; }
@@ -1337,6 +1349,7 @@
   <i class="fa-solid fa-fire"></i>
   <span id="top-bar-text">Nur noch <strong>2 kostenlose Plätze</strong> frei — Preis steigt danach auf 200 €</span>
   <a href="#formular">Jetzt sichern →</a>
+  <button id="top-bar-close" onclick="closeTopBar()" aria-label="Schließen">×</button>
 </div>
 
 <div id="exit-popup-overlay">
@@ -2606,6 +2619,17 @@
   const navEl = document.querySelector('nav');
   const topBar = document.getElementById('top-bar');
   const halfPage = () => document.body.scrollHeight / 2;
+  let topBarDismissed = false;
+
+  function updateBarHeight() {
+    document.documentElement.style.setProperty('--bar-h', topBar.offsetHeight + 'px');
+  }
+
+  window.closeTopBar = function() {
+    topBarDismissed = true;
+    topBar.classList.remove('visible');
+    document.documentElement.style.setProperty('--bar-h', '0px');
+  };
 
   window.addEventListener('scroll', () => {
     if (window.scrollY > 60) {
@@ -2613,10 +2637,13 @@
     } else {
       navEl.classList.remove('scrolled');
     }
-    if (window.scrollY > halfPage()) {
-      topBar.classList.add('visible');
-    } else {
-      topBar.classList.remove('visible');
+    if (!topBarDismissed) {
+      if (window.scrollY > halfPage()) {
+        topBar.classList.add('visible');
+        updateBarHeight();
+      } else {
+        topBar.classList.remove('visible');
+      }
     }
   }, { passive: true });
 
