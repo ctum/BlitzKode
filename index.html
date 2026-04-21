@@ -50,6 +50,106 @@
     }
 
     /* ── NAV ── */
+    #top-bar {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 1100;
+      background: var(--gold);
+      color: #fff;
+      font-size: 0.85rem;
+      font-weight: 700;
+      text-align: center;
+      padding: 10px 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      transform: translateY(-100%);
+      transition: transform 0.4s cubic-bezier(0.16,1,0.3,1);
+      letter-spacing: 0.2px;
+    }
+    #top-bar.visible { transform: translateY(0); }
+    #top-bar a {
+      color: #fff;
+      text-decoration: underline;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+    #top-bar.visible ~ nav { top: 40px; }
+
+    #exit-popup-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.7);
+      z-index: 9000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+    }
+    #exit-popup-overlay.show {
+      opacity: 1;
+      pointer-events: all;
+    }
+    #exit-popup {
+      background: #111;
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 20px;
+      padding: 48px 40px;
+      max-width: 540px;
+      width: 100%;
+      text-align: center;
+      position: relative;
+      transform: scale(0.92);
+      transition: transform 0.3s cubic-bezier(0.16,1,0.3,1);
+    }
+    #exit-popup-overlay.show #exit-popup { transform: scale(1); }
+    #exit-popup .popup-close {
+      position: absolute;
+      top: 16px; right: 20px;
+      background: none;
+      border: none;
+      color: #555;
+      font-size: 1.4rem;
+      cursor: pointer;
+      line-height: 1;
+    }
+    #exit-popup .popup-close:hover { color: #fff; }
+    #exit-popup h3 {
+      font-size: 1.6rem;
+      font-weight: 900;
+      color: #fff;
+      letter-spacing: -0.5px;
+      margin-bottom: 12px;
+    }
+    #exit-popup h3 span { color: var(--gold); }
+    #exit-popup p {
+      color: var(--gray-dark);
+      font-size: 0.95rem;
+      line-height: 1.7;
+      margin-bottom: 28px;
+    }
+    #exit-popup .btn-haupt {
+      width: 100%;
+      justify-content: center;
+      font-size: 1rem;
+      padding: 16px 24px;
+    }
+    #exit-popup .popup-skip {
+      display: block;
+      margin-top: 14px;
+      color: #555;
+      font-size: 0.8rem;
+      cursor: pointer;
+      background: none;
+      border: none;
+      text-decoration: underline;
+    }
+    #exit-popup .popup-skip:hover { color: #999; }
+
     nav {
       position: fixed;
       top: 0; left: 0; right: 0;
@@ -1233,6 +1333,33 @@
   }, 500);
 </script>
 
+<div id="top-bar">
+  <i class="fa-solid fa-fire"></i>
+  <span id="top-bar-text">Nur noch <strong>2 kostenlose Plätze</strong> frei — Preis steigt danach auf 200 €</span>
+  <a href="#formular">Jetzt sichern →</a>
+</div>
+
+<div id="exit-popup-overlay">
+  <div id="exit-popup">
+    <button class="popup-close" onclick="closeExitPopup()">×</button>
+    <div style="font-size:2.5rem;margin-bottom:16px;color:var(--gold)"><i class="fa-solid fa-bolt"></i></div>
+    <h3 id="popup-titel">Warten Sie — <span>Ihr Platz</span> ist noch frei.</h3>
+    <p id="popup-text">Sie verlassen die Seite, aber die kostenlosen Plätze sind begrenzt. Wenn der Preis auf 200 € steigt, ist es zu spät.</p>
+    <a href="#formular" class="btn-haupt" id="popup-btn" onclick="closeExitPopup()">
+      <i class="fa-solid fa-bolt"></i> Jetzt kostenlosen Platz sichern
+    </a>
+    <button class="popup-skip" id="popup-skip" onclick="closeExitPopup()">Nein danke, ich zahle lieber mehr später</button>
+  </div>
+</div>
+<script>
+  function closeExitPopup() {
+    document.getElementById('exit-popup-overlay').classList.remove('show');
+  }
+  document.getElementById('exit-popup-overlay').addEventListener('click', function(e) {
+    if (e.target === document.getElementById('exit-popup-overlay')) closeExitPopup();
+  });
+</script>
+
 <a href="#formular" class="schwebendes-cta">
   <i class="fa-solid fa-bolt"></i>
   Jetzt kostenlos sichern
@@ -2050,6 +2177,43 @@
       designkostenBadge.textContent = isFree ? 'Keine Designkosten' : 'Einmalige Designkosten';
     }
 
+    const popupTitel = document.getElementById('popup-titel');
+    const popupText  = document.getElementById('popup-text');
+    const popupBtn   = document.getElementById('popup-btn');
+    const popupSkip  = document.getElementById('popup-skip');
+    if (popupTitel && popupText && popupBtn) {
+      if (isFree && slots_remaining > 0) {
+        popupTitel.innerHTML = `Warten Sie — <span>Ihr kostenloser Platz</span> ist noch frei.`;
+        popupText.textContent = `Sie verlassen die Seite, aber die kostenlosen Plätze sind begrenzt. Wenn der Preis auf 200 € steigt, ist es zu spät.`;
+        popupBtn.innerHTML = `<i class="fa-solid fa-bolt"></i> Jetzt kostenlosen Platz sichern`;
+        popupSkip.textContent = `Nein danke, ich zahle lieber mehr später`;
+      } else if (slots_remaining > 0) {
+        const isLastTier = !TIERS.find(t => t.tier === current_tier + 1);
+        popupTitel.innerHTML = `Warten Sie — <span>Nur noch ${slots_remaining} Plätze</span> zu diesem Preis.`;
+        popupText.textContent = isLastTier
+          ? `Sie verlassen die Seite, aber das ist unser letzter verfügbarer Preis. Sichern Sie sich jetzt einen der verbleibenden Plätze.`
+          : `Sie verlassen die Seite, aber der aktuelle Preis von ${current_price} € gilt nicht ewig. Danach steigt er auf ${getNextPrice(current_tier)} €.`;
+        popupBtn.innerHTML = `<i class="fa-solid fa-bolt"></i> Jetzt für ${current_price} € sichern`;
+        popupSkip.textContent = isLastTier ? `Nein danke` : `Nein danke, ich warte auf den höheren Preis`;
+      } else {
+        popupTitel.innerHTML = `Warten Sie — <span>Letzte Chance</span> zum aktuellen Preis.`;
+        popupText.textContent = `Alle Plätze dieser Stufe sind vergeben. Sichern Sie sich jetzt einen Platz zum nächsten Preis.`;
+        popupBtn.innerHTML = `<i class="fa-solid fa-bolt"></i> Jetzt anfragen`;
+        popupSkip.textContent = `Nein danke`;
+      }
+    }
+
+    const topBarText = document.getElementById('top-bar-text');
+    if (topBarText) {
+      if (isFree && slots_remaining > 0) {
+        topBarText.innerHTML = `Nur noch <strong>${slots_remaining} kostenlose Plätze</strong> frei — Preis steigt danach auf 200 €`;
+      } else if (slots_remaining > 0) {
+        topBarText.innerHTML = `Nur noch <strong>${slots_remaining} Plätze</strong> zum Preis von <strong>${current_price} €</strong> verfügbar`;
+      } else {
+        topBarText.innerHTML = `Alle Plätze dieser Stufe vergeben — Nächster Preis: <strong>${getNextPrice(current_tier)} €</strong>`;
+      }
+    }
+
     const btnPricingCta = document.getElementById('btn-preis-cta');
     if (btnPricingCta) {
       if (isFree && slots_remaining > 0) {
@@ -2341,50 +2505,7 @@
     if (!isOpen) item.classList.add('open');
   };
 
-  /* PREVIEW PANEL — disabled in production, re-enable locally to test tier/slot states
-  let _previewTier = 1;
-  let _previewSlots = 10;
-
-  window.previewTier = function(tier) {
-    _previewTier = parseInt(tier);
-    const t = TIERS.find(t => t.tier === _previewTier);
-    if (!t) return;
-    _previewSlots = t.slots;
-    const slotInput = document.getElementById('preview-slots');
-    if (slotInput) { slotInput.max = t.slots; slotInput.value = t.slots; }
-    const slotLabel = document.getElementById('preview-slots-label');
-    if (slotLabel) slotLabel.textContent = t.slots;
-    updateUI({ current_tier: t.tier, current_price: t.price, slots_remaining: _previewSlots, total_leads: (_previewTier - 1) * 10 });
-  };
-
-  window.previewSlots = function(val) {
-    _previewSlots = parseInt(val);
-    const slotLabel = document.getElementById('preview-slots-label');
-    if (slotLabel) slotLabel.textContent = _previewSlots;
-    const t = TIERS.find(t => t.tier === _previewTier);
-    if (!t) return;
-    updateUI({ current_tier: t.tier, current_price: t.price, slots_remaining: _previewSlots, total_leads: (_previewTier - 1) * 10 });
-  };
-  END PREVIEW PANEL */
 </script>
-
-<!-- PREVIEW PANEL — disabled in production, uncomment locally to test tier/slot states
-<div id="preview-panel" style="position:fixed;bottom:20px;left:20px;z-index:9999;background:#1a1a1a;border:1px solid #333;border-radius:12px;padding:12px 16px;display:flex;align-items:center;gap:12px;font-family:Inter,sans-serif;font-size:0.8rem;color:#999">
-  <span style="color:#555;font-size:0.7rem;text-transform:uppercase;letter-spacing:1px">Preview</span>
-  <select onchange="previewTier(this.value)" style="background:#2a2a2a;border:1px solid #444;color:#fff;padding:4px 8px;border-radius:6px;font-size:0.8rem;cursor:pointer">
-    <option value="1">Tier 1 — Kostenlos</option>
-    <option value="2">Tier 2 — 200 €</option>
-    <option value="3">Tier 3 — 500 €</option>
-    <option value="4">Tier 4 — 999 €</option>
-    <option value="5">Tier 5 — 1.200 €</option>
-  </select>
-  <span style="color:#444">|</span>
-  <span style="color:#666;font-size:0.7rem">Plätze:</span>
-  <input id="preview-slots" type="range" min="0" max="10" value="10" oninput="previewSlots(this.value)" style="width:80px;accent-color:#D94F2A;cursor:pointer" />
-  <span id="preview-slots-label" style="color:#fff;min-width:16px;text-align:center">10</span>
-  <span style="color:#444;font-size:0.7rem">· solo local</span>
-</div>
-END PREVIEW PANEL -->
 
 <script>
   emailjs.init('NtqghfvpSrbV0sUg8');
@@ -2398,13 +2519,6 @@ END PREVIEW PANEL -->
     .from('.preis-stufen', { y: 20, opacity: 0, duration: 0.5, ease: 'power2.out' }, '-=0.3')
     .from('.held-aktionen', { y: 20, opacity: 0, duration: 0.5, ease: 'power2.out' }, '-=0.2')
     .from('.vertrauen-zeile', { y: 15, opacity: 0, duration: 0.4, ease: 'power2.out' }, '-=0.2');
-  gsap.to('.held::before', {
-    scale: 1.15,
-    duration: 3,
-    repeat: -1,
-    yoyo: true,
-    ease: 'sine.inOut'
-  });
   ScrollTrigger.create({
     trigger: '.dringlichkeits-leiste',
     start: 'top 80%',
@@ -2420,7 +2534,7 @@ END PREVIEW PANEL -->
     y: 50, opacity: 0, duration: 0.6, stagger: 0.15, ease: 'power2.out', clearProps: 'all'
   });
 
-  gsap.from('.leistung-elemento', {
+  gsap.from('.leistung-element', {
     scrollTrigger: { trigger: '.leistungen-raster', start: 'top 85%' },
     x: -30, opacity: 0, duration: 0.5, stagger: 0.1, ease: 'power2.out', clearProps: 'all'
   });
@@ -2430,12 +2544,8 @@ END PREVIEW PANEL -->
     start: 'top 85%',
     once: true,
     onEnter: () => {
-      gsap.from('.preis-karte', {
-        y: 40, opacity: 0, duration: 0.5, stagger: 0.1, ease: 'power2.out', clearProps: 'all'
-      });
-      gsap.from('.preis-pfeil', {
-        opacity: 0, duration: 0.4, stagger: 0.1, delay: 0.3, clearProps: 'all'
-      });
+      const karten = document.querySelectorAll('.preis-karte');
+      if (karten.length) gsap.from(karten, { y: 40, opacity: 0, duration: 0.5, stagger: 0.1, ease: 'power2.out', clearProps: 'all' });
     }
   });
   gsap.from('#wer-ist-dabei table', {
@@ -2494,13 +2604,35 @@ END PREVIEW PANEL -->
     onLeaveBack: () => gsap.to(floatingBtn, { opacity: 0, y: 20, duration: 0.3 })
   });
   const navEl = document.querySelector('nav');
+  const topBar = document.getElementById('top-bar');
+  const halfPage = () => document.body.scrollHeight / 2;
+
   window.addEventListener('scroll', () => {
     if (window.scrollY > 60) {
       navEl.classList.add('scrolled');
     } else {
       navEl.classList.remove('scrolled');
     }
+    if (window.scrollY > halfPage()) {
+      topBar.classList.add('visible');
+    } else {
+      topBar.classList.remove('visible');
+    }
   }, { passive: true });
+
+  let exitPopupShown = false;
+  document.addEventListener('mouseleave', (e) => {
+    if (e.clientY <= 0 && !exitPopupShown) {
+      exitPopupShown = true;
+      document.getElementById('exit-popup-overlay').classList.add('show');
+    }
+  });
+
+  window.addEventListener('message', (e) => {
+    if (e.data && e.data.type === 'preview') {
+      updateUI({ current_tier: e.data.tier, current_price: e.data.price, slots_remaining: e.data.slots, total_leads: (e.data.tier - 1) * 10 });
+    }
+  });
 </script>
 
 </body>

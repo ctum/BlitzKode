@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>Preview — Blitzkode</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet" />
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { background: #0a0a0a; font-family: Inter, sans-serif; }
+
+    #panel {
+      position: fixed;
+      top: 0; left: 50%; transform: translateX(-50%);
+      z-index: 9999;
+      background: #1a1a1a;
+      border: 1px solid #333;
+      border-top: none;
+      border-radius: 0 0 14px 14px;
+      padding: 10px 20px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      font-size: 0.8rem;
+      color: #999;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.5);
+    }
+    #panel span.label {
+      color: #444;
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      font-weight: 700;
+    }
+    #panel select {
+      background: #2a2a2a;
+      border: 1px solid #444;
+      color: #fff;
+      padding: 5px 10px;
+      border-radius: 6px;
+      font-size: 0.8rem;
+      cursor: pointer;
+      font-family: Inter, sans-serif;
+    }
+    #panel .sep { color: #333; }
+    #panel input[type=range] {
+      width: 90px;
+      accent-color: #D94F2A;
+      cursor: pointer;
+    }
+    #panel #slots-label { color: #fff; min-width: 18px; text-align: center; font-weight: 700; }
+
+    iframe {
+      width: 100%;
+      height: 100vh;
+      border: none;
+      display: block;
+    }
+  </style>
+</head>
+<body>
+
+<div id="panel">
+  <span class="label"><i class="fa-solid fa-eye"></i> Preview</span>
+  <select id="tier-select">
+    <option value="1">Tier 1 — Kostenlos</option>
+    <option value="2">Tier 2 — 200 €</option>
+    <option value="3">Tier 3 — 500 €</option>
+    <option value="4">Tier 4 — 999 €</option>
+    <option value="5">Tier 5 — 1.200 €</option>
+  </select>
+  <span class="sep">|</span>
+  <span style="color:#666;font-size:0.7rem">Plätze:</span>
+  <input type="range" id="slots-range" min="0" max="10" value="10" />
+  <span id="slots-label">10</span>
+</div>
+
+<iframe id="frame" src="index.html"></iframe>
+
+<script>
+  const frame = document.getElementById('frame');
+  const tierSelect = document.getElementById('tier-select');
+  const slotsRange = document.getElementById('slots-range');
+  const slotsLabel = document.getElementById('slots-label');
+
+  const TIERS = [
+    { tier: 1, price: 0,    slots: 10 },
+    { tier: 2, price: 200,  slots: 10 },
+    { tier: 3, price: 500,  slots: 10 },
+    { tier: 4, price: 999,  slots: 10 },
+    { tier: 5, price: 1200, slots: 10 },
+  ];
+
+  function sendPreview() {
+    const tier = parseInt(tierSelect.value);
+    const slots = parseInt(slotsRange.value);
+    const t = TIERS.find(t => t.tier === tier);
+    frame.contentWindow.postMessage({ type: 'preview', tier, slots, price: t.price }, '*');
+  }
+
+  tierSelect.addEventListener('change', () => {
+    const tier = parseInt(tierSelect.value);
+    const t = TIERS.find(t => t.tier === tier);
+    slotsRange.max = t.slots;
+    slotsRange.value = t.slots;
+    slotsLabel.textContent = t.slots;
+    sendPreview();
+  });
+
+  slotsRange.addEventListener('input', () => {
+    slotsLabel.textContent = slotsRange.value;
+    sendPreview();
+  });
+
+  frame.addEventListener('load', () => {
+    sendPreview();
+  });
+</script>
+
+</body>
+</html>
